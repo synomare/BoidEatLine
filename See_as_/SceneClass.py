@@ -1,0 +1,109 @@
+from random import choice, uniform
+import math
+import numpy as np
+from scene import *
+from BoidClass import Boid
+
+class SwarmScene (Scene):	
+	def setup(self):
+		self.background_color = 0.0, 0.0, 0.0
+		self.swarm_size = 60
+		self.swarm = [Boid(self.size.w, self.size.y, parent=self) for i in range(self.swarm_size)]
+		self.out_t = 0
+		self.in_t = 0
+		self.location_logger = []
+		
+	def update(self):
+		for boid in self.swarm:
+			boid.age += self.dt
+			boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < 		boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
+			boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
+			boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
+			size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
+			
+			if self.location_logger:
+				for i in self.location_logger:
+					if i != 'pass' and abs(boid.position - i) <50:
+						boid.v -= (boid.position - i) * 0.5
+						if abs(boid.position - i) < size_of_neighbors * 2:
+							boid.drawing_coordinates.append \
+							(self.location_logger.pop(self.location_logger.index(i)))
+							if len(boid.drawing_coordinates) > boid.max_memory:
+								sub = len(boid.drawing_coordinates) - boid.max_memory
+								del boid.drawing_coordinates[:sub]
+			boid.exe_rule(boid.cohesion_neighbors,boid.separation_neighbors,boid.alighnment_neighbors)
+			
+			if boid.age >= boid.death_age:
+				self.death(boid)
+				self.born()
+				for b in self.swarm:
+					for num, y in enumerate(b.drawing_coordinates):
+							self.location_logger.append(y)
+							b.drawing_coordinates.pop(num)
+					self.location_logger.append('pass')
+
+	def cos_theta_calc(self, boid, b):
+		vec_a = b.position - boid.position
+		vec_b = boid.v
+		vec_a /= abs(vec_a)
+		vec_b /= abs(vec_b)
+		cos = vec_a[0] * vec_b[0] + vec_a[1] * vec_b[1] / abs(vec_a) * abs(vec_b)
+		if 1<cos:
+			cos = 1
+		elif cos< -1:
+			cos = -1
+		return cos
+		
+	def draw(self):
+		color = [0,0,0]
+		stroke(1.0, 1.0, 1.0,0.5)
+		stroke_weight(0.4)
+		for boid in self.swarm:
+			neighbor_set = set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors])
+			for i in neighbor_set:
+				if boid.drawing_coordinates and i.drawing_coordinates:
+					line(boid.position[0], boid.position[1], i.position[0], i.position[1])
+				
+		stroke(1.0, 0.97, 0.86)
+		stroke_weight(1)
+		if len(self.location_logger) > 1:
+			for i in range(len(self.location_logger) -1):
+				if 'pass' == self.location_logger[i] or 'pass' == self.location_logger[i+1]:
+					continue
+				else:
+							line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
+		for boid in self.swarm:
+			boid.position += boid.v
+			boid.rotation = math.atan2(*reversed(boid.v)) + math.pi		
+
+	def touch_began(self,touch):
+		self.in_t = self.t
+		self.location_logger.append(touch.location)
+		self.touch_detect(touch.location)
+	
+	def touch_moved(self,touch):
+		self.location_logger.append(touch.location)
+		self.touch_detect(touch.location)
+	
+	def touch_ended(self,touch):
+		self.location_logger.append('pass')
+		self.out_t = self.t
+		
+	def touch_detect(self,touch_location):
+		for i in self.swarm:
+			if abs(touch_location - i.position) < 100:
+				i.v += (i.position - touch_location) /abs(i.position - touch_location) * 5
+
+	def did_change_size(self):
+		for b in self.swarm:
+			b.max_x = self.size.w
+			b.max_y = self.size.h
+			
+		
+	def born(self):
+		self.swarm.append(Boid(self.size.w, self.size.y, parent=self))
+
+	def death(self,boid):
+		self.swarm.remove(boid)
+		boid.remove_from_parent()
+		
