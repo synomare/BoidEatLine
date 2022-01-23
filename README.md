@@ -1,4 +1,4 @@
-# See_as_
+# BoidEatLine
 2022/01/18 制作物
 
 pythonista上で実行。
