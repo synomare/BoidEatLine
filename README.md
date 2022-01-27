@@ -9,7 +9,7 @@ https://apps.apple.com/jp/app/pythonista-3/id1085978097
 
 -------------
 Ipad向けにパラメーターをいじっているのでiphoneの場合は個体の数が多い可能性あり。
-⇨SceneClass.pyのself.swarm_sizeを少なくする。など。
+⇨SceneClass.pyのself.swarm_sizeを少なくする。
 
 -------------
 numpyのインポートエラーが出る可能性がある。
