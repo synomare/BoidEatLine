@@ -12,36 +12,35 @@ class SwarmScene (Scene):
         self.location_logger = []
         
     def update(self):		
-            if not any(self.location_logger):
-                self.location_logger = []
+        if not any(self.location_logger):
+            self.location_logger = []
             
-            for boid in self.swarm:
-                boid.age += self.dt
-                boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < 		boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
-                boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
-                boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
-                size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
-                
-                if self.t >0:
-                    if self.location_logger:
-                        for i in self.location_logger:
-                            if i != None and abs(boid.position - i) <40:
-                                boid.v -= (boid.position - i) * 0.5
-                                if abs(boid.position - i) < size_of_neighbors * 3:
-                                    boid.drawing_coordinates.append \
-                                    (self.location_logger.pop(self.location_logger.index(i)))								
-                                    
-                boid.exe_rule()
-                
-                if boid.age >= boid.death_age:
-                    self.kill(boid)
-                    self.born()
-                    for b in self.swarm:
-                        if b.drawing_coordinates:
-                            for num, y in enumerate(b.drawing_coordinates):
-                                    self.location_logger.append(y)
-                                    b.drawing_coordinates.pop(num)
-                            self.location_logger.append(None)
+        for boid in self.swarm:
+            boid.age += self.dt
+            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < 		boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
+            boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
+            boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
+            size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
+            
+            if self.t >0:
+                if self.location_logger:
+                    for i in self.location_logger:
+                        if i != None and abs(boid.position - i) <40:
+                            boid.v -= (boid.position - i) * 0.5
+                            if abs(boid.position - i) < size_of_neighbors * 3:
+                                boid.drawing_coordinates.append \
+                                (self.location_logger.pop(self.location_logger.index(i)))
+            boid.exe_rule()
+            
+            if boid.age >= boid.death_age:
+                self.kill(boid)
+                self.born()
+                for b in self.swarm:
+                    if b.drawing_coordinates:
+                        for num, y in enumerate(b.drawing_coordinates):
+                                self.location_logger.append(y)
+                                b.drawing_coordinates.pop(num)
+                        self.location_logger.append(None)
                 
     def cos_theta_calc(self, boid, b):
         vec_a = b.position - boid.position
