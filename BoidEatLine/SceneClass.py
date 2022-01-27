@@ -17,7 +17,7 @@ class SwarmScene (Scene):
             
         for boid in self.swarm:
             boid.age += self.dt
-            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < 		boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
+            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) <　boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
             boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
             boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
             size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
@@ -38,8 +38,8 @@ class SwarmScene (Scene):
                 for b in self.swarm:
                     if b.drawing_coordinates:
                         for num, y in enumerate(b.drawing_coordinates):
-                                self.location_logger.append(y)
-                                b.drawing_coordinates.pop(num)
+                            self.location_logger.append(y)
+                            b.drawing_coordinates.pop(num)
                         self.location_logger.append(None)
                 
     def cos_theta_calc(self, boid, b):
@@ -69,7 +69,7 @@ class SwarmScene (Scene):
                 if None == self.location_logger[i] or None == self.location_logger[i+1]:
                     continue
                 else:
-                            line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
+                    line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
         for boid in self.swarm:
             boid.position += boid.v
             boid.rotation = math.atan2(*reversed(boid.v)) + math.pi		
