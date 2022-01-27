@@ -21,4 +21,4 @@ numpyのインポートエラーが出る場合がある。
 
 -------------
 その他なにかあれば
-→ twitter:@syohakuseki
+→ twitter:https://twitter.com/syohakuseki
