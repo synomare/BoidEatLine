@@ -17,7 +17,7 @@ class SwarmScene (Scene):
             
         for boid in self.swarm:
             boid.age += self.dt
-            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
+            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) <boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
             boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
             boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
             size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
