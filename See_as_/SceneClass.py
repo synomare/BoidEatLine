@@ -7,7 +7,7 @@ from BoidClass import Boid
 class SwarmScene (Scene):	
 	def setup(self):
 		self.background_color = 0.0, 0.0, 0.0
-		self.swarm_size = 30
+		self.swarm_size = 35
 		self.swarm = [Boid(self.size.w, self.size.y, parent=self) for i in range(self.swarm_size)]
 		self.location_logger = []
 		
