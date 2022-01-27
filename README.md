@@ -18,3 +18,7 @@ numpyのインポートエラーが出る場合がある。
 -------------
 このプログラムの基礎になっているBoidモデルについてはこちらなど参照
 ⇨https://mas.kke.co.jp/model/boid-model/
+
+-------------
+その他なにかあれば
+→ twitter:@syohakuseki
