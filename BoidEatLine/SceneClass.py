@@ -17,9 +17,19 @@ class SwarmScene (Scene):
             
         for boid in self.swarm:
             boid.age += self.dt
-            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) <boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
-            boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
-            boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position) < boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
+            if boid.age >= boid.death_age:
+                self.kill(boid)
+                self.born()
+                for b in self.swarm:
+                    if b.drawing_coordinates:
+                        for num, y in enumerate(b.drawing_coordinates):
+                            self.location_logger.append(y)
+                            b.drawing_coordinates.pop(num)
+                        self.location_logger.append(None)
+
+            boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
+            boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
+            boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
             size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
             
             if self.t >0:
@@ -32,16 +42,6 @@ class SwarmScene (Scene):
                                 (self.location_logger.pop(self.location_logger.index(i)))
                                 
             boid.exe_rule()
-            
-            if boid.age >= boid.death_age:
-                self.kill(boid)
-                self.born()
-                for b in self.swarm:
-                    if b.drawing_coordinates:
-                        for num, y in enumerate(b.drawing_coordinates):
-                            self.location_logger.append(y)
-                            b.drawing_coordinates.pop(num)
-                        self.location_logger.append(None)
 
         for boid in self.swarm:
             boid.position += boid.v
@@ -54,9 +54,9 @@ class SwarmScene (Scene):
         vec_a /= abs(vec_a)
         vec_b /= abs(vec_b)
         cos = vec_a[0] * vec_b[0] + vec_a[1] * vec_b[1] / abs(vec_a) * abs(vec_b)
-        if 1<cos:
+        if 1 < cos:
             cos = 1
-        elif cos< -1:
+        elif cos < -1:
             cos = -1
         return cos
         
