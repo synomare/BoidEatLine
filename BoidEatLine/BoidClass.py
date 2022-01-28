@@ -42,9 +42,6 @@ class Boid (SpriteNode):
         self.alighnment_neighbors = []
         
     def exe_rule(self):
-    	self.position += self.v
-        self.rotation = math.atan2(*reversed(boid.v)) + math.pi	
-
         self.cohesion_rule()
         self.separation_rule()
         self.alignment_rule()
