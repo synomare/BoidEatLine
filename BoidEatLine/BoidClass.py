@@ -51,8 +51,6 @@ class Boid (SpriteNode):
         self.boundary_rule()
         self.speed_rule()
 
-        
-
     def cohesion_rule(self):
         if not self.cohesion_neighbors:
             return 
