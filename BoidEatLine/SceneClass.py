@@ -43,10 +43,6 @@ class SwarmScene (Scene):
                                 
             boid.exe_rule()
 
-        for boid in self.swarm:
-            boid.position += boid.v
-            boid.rotation = math.atan2(*reversed(boid.v)) + math.pi		
-
                 
     def cos_theta_calc(self, boid, b):
         vec_a = b.position - boid.position

@@ -42,14 +42,15 @@ class Boid (SpriteNode):
         self.alighnment_neighbors = []
         
     def exe_rule(self):
+    	self.position += self.v
+        self.rotation = math.atan2(*reversed(boid.v)) + math.pi	
+
         self.cohesion_rule()
         self.separation_rule()
         self.alignment_rule()
         self.boundary_rule()
-        if abs(self.v) > self.max_speed:
-            self.v *= (self.max_speed / abs(self.v))
-        if abs(self.v) < self.min_speed:
-            self.v *= (self.min_speed / abs(self.v))
+        self.speed_rule()
+
         
 
     def cohesion_rule(self):
@@ -89,3 +90,10 @@ class Boid (SpriteNode):
         if self.position.y > self.max_y:
             v.y = -1
         self.v += v * self.boundary_force
+    
+    def speed_rule(self):
+        if abs(self.v) > self.max_speed:
+            self.v *= (self.max_speed / abs(self.v))
+        if abs(self.v) < self.min_speed:
+            self.v *= (self.min_speed / abs(self.v))
+
