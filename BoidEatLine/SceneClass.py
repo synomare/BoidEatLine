@@ -30,6 +30,7 @@ class SwarmScene (Scene):
                             if abs(boid.position - i) < size_of_neighbors * 3:
                                 boid.drawing_coordinates.append \
                                 (self.location_logger.pop(self.location_logger.index(i)))
+                                
             boid.exe_rule()
             
             if boid.age >= boid.death_age:
@@ -41,6 +42,11 @@ class SwarmScene (Scene):
                             self.location_logger.append(y)
                             b.drawing_coordinates.pop(num)
                         self.location_logger.append(None)
+
+        for boid in self.swarm:
+            boid.position += boid.v
+            boid.rotation = math.atan2(*reversed(boid.v)) + math.pi		
+
                 
     def cos_theta_calc(self, boid, b):
         vec_a = b.position - boid.position
@@ -70,9 +76,6 @@ class SwarmScene (Scene):
                     continue
                 else:
                     line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
-        for boid in self.swarm:
-            boid.position += boid.v
-            boid.rotation = math.atan2(*reversed(boid.v)) + math.pi		
 
     def touch_began(self,touch):
         self.location_logger.append(touch.location)
