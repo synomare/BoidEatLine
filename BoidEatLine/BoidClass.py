@@ -10,11 +10,12 @@ class Boid (SpriteNode):
         
         self.drawing_coordinates = []
         
-        self.age = 0
-        self.death_age = randint(20, 120)
+        self.age = 1
+        self.death_age = randint(20, 90)
         self.scale = 0.0025
 
-        self.max_speed = np.random.normal(4, 0.008, 1)[0]
+        self.first_max_speed = np.random.normal(4, 0.008, 1)[0]
+        self.max_speed = self.first_max_speed
         self.min_speed= np.random.normal(2, 0.001, 1)[0]
 
         self.COHESION_DISTANCE = np.random.normal(150, 20, 1)[0]
@@ -47,6 +48,7 @@ class Boid (SpriteNode):
         self.alignment_rule()
         self.boundary_rule()
         self.speed_rule()
+        self.age_effect()
 
     def cohesion_rule(self):
         if not self.cohesion_neighbors:
@@ -91,4 +93,6 @@ class Boid (SpriteNode):
             self.v *= (self.max_speed / abs(self.v))
         if abs(self.v) < self.min_speed:
             self.v *= (self.min_speed / abs(self.v))
-
+            
+    def age_effect(self):
+        self.max_speed =  self.first_max_speed - 1.2 * self.age/self.death_age

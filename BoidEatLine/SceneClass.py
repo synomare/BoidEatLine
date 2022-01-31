@@ -6,7 +6,7 @@ from BoidClass import Boid
 
 class SwarmScene (Scene):	
     def setup(self):
-        self.background_color = 0.0, 0.0, 0.0
+        self.background_color = 1,1,1
         self.swarm_size = 35
         self.swarm = [Boid(self.size.w, self.size.y, parent=self) for i in range(self.swarm_size)]
         self.location_logger = []
@@ -31,8 +31,8 @@ class SwarmScene (Scene):
             boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
             boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
             size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
-            #はじめに絵を描くための時間。デフォルトは3秒。
-            if self.t >3:
+            
+            if self.t >5:
                 if self.location_logger:
                     for i in self.location_logger:
                         if i != None and abs(boid.position - i) <40:
@@ -62,7 +62,7 @@ class SwarmScene (Scene):
         return cos
         
     def draw(self):
-        stroke(1,1,1)
+        stroke(0,0,0)
         stroke_weight(0.3)
         for boid in self.swarm:
             neighbor_set = set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors])
