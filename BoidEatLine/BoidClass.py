@@ -27,8 +27,8 @@ class Boid (SpriteNode):
         self.ALIGNMENT_ANGLE = np.random.normal(180, 70, 1)[0]
         
         self.cohesion_power = np.random.normal(0.0008, 0.005, 1)[0]
-        self.separation_poewr = np.random.normal(0.0008, 0.005, 1)[0]
-        self.alighnmen_power = np.random.normal(0.0015, 0.005, 1)[0]
+        self.separation_power = np.random.normal(0.0008, 0.005, 1)[0]
+        self.alighnment_power = np.random.normal(0.0015, 0.005, 1)[0]
         self.boundary_force = 1
 
         self.max_x = max_x
@@ -40,7 +40,7 @@ class Boid (SpriteNode):
         
         self.cohesion_neighbors = []
         self.separation_neighbors = []
-        self.alighnment_neighbors = []
+        self.alignment_neighbors = []
         
     def exe_rule(self):
         self.cohesion_rule()
@@ -65,16 +65,16 @@ class Boid (SpriteNode):
         c = Vector2()
         for n in self.separation_neighbors:
             c += (self.position - n.position)
-        self.v += c * self.separation_poewr
+        self.v += c * self.separation_power
     
     def alignment_rule(self):
-        if not self.alighnment_neighbors:
+        if not self.alignment_neighbors:
             return 
         v = Vector2()
-        for n in self.alighnment_neighbors:
+        for n in self.alignment_neighbors:
             v += n.v
-        m = v / len(self.alighnment_neighbors)
-        self.v += m * self.alighnmen_power
+        m = v / len(self.alignment_neighbors)
+        self.v += m * self.alighnment_power
     
     def boundary_rule(self):
         v = Vector2()

@@ -29,8 +29,8 @@ class SwarmScene (Scene):
 
             boid.cohesion_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.COHESION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.COHESION_ANGLE/2]
             boid.separation_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.SEPARATION_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.SEPARATION_ANGLE/2]
-            boid.alighnment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
-            size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors]))
+            boid.alignment_neighbors = [b for b in self.swarm if b != boid and abs(b.position - boid.position)<boid.ALIGNMENT_DISTANCE and math.degrees(math.acos(self.cos_theta_calc(boid, b))) < boid.ALIGNMENT_ANGLE/2]
+            size_of_neighbors = len(set([*boid.cohesion_neighbors,*boid.alignment_neighbors,*boid.separation_neighbors]))
             
             if self.t >5:
                 if self.location_logger:
@@ -65,15 +65,15 @@ class SwarmScene (Scene):
         stroke(0,0,0)
         stroke_weight(0.3)
         for boid in self.swarm:
-            neighbor_set = set([*boid.cohesion_neighbors,*boid.alighnment_neighbors,*boid.separation_neighbors])
+            neighbor_set = set([*boid.cohesion_neighbors,*boid.alignment_neighbors,*boid.separation_neighbors])
             for i in neighbor_set:
                 if boid.drawing_coordinates and i.drawing_coordinates:
                     line(boid.position[0], boid.position[1], i.position[0], i.position[1])
                 
         stroke_weight(1)
         if self.location_logger:
-            for i in range(len(self.location_logger) -1):
-                if None == self.location_logger[i] or None == self.location_logger[i+1]:
+            for i in range(len(self.location_logger) - 1):
+                if self.location_logger[i] == None or self.location_logger[i+1] == None:
                     continue
                 else:
                     line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
