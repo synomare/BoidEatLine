@@ -54,12 +54,12 @@ class SwarmScene (Scene):
         vec_b = boid.v
         vec_a /= abs(vec_a)
         vec_b /= abs(vec_b)
-        cos = vec_a[0] * vec_b[0] + vec_a[1] * vec_b[1] / abs(vec_a) * abs(vec_b)
-        if 1 < cos:
-            cos = 1
-        elif cos < -1:
-            cos = -1
-        return cos
+        cos_theta = vec_a[0] * vec_b[0] + vec_a[1] * vec_b[1] / abs(vec_a) * abs(vec_b)
+        if 1 < cos_theta:
+            cos_theta = 1
+        elif cos_theta < -1:
+            cos_theta = -1
+        return cos_theta
         
     def draw(self):
         stroke(0,0,0)
