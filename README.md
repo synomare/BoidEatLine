@@ -11,6 +11,3 @@ Ipad向けにパラメーターをいじっているのでiphoneの場合は個�
 このプログラムの基礎になっているBoidモデルについてはこちらなど参照⇨https://mas.kke.co.jp/model/boid-model/
 
 Pythonistaモジュールの文書のリンクは⇨http://omz-software.com/pythonista/docs/ios/index.html
-
-## 連絡先
-→ twitter:https://twitter.com/syohakuseki
