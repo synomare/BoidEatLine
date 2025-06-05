@@ -1,17 +1,32 @@
 from random import choice, uniform
 import math
 import numpy as np
-from scene import *
+import pygame
+from pygame.math import Vector2
 from BoidClass import Boid
 
-class SwarmScene (Scene):	
+
+class Size:
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+
+class SwarmScene:
+    def __init__(self, width, height):
+        self.size = Size(width, height)
+        self.dt = 0
+        self.t = 0
+        self.setup()
+
     def setup(self):
-        self.background_color = 1,1,1
+        self.background_color = (255, 255, 255)
         self.swarm_size = 35
-        self.swarm = [Boid(self.size.w, self.size.y, parent=self) for i in range(self.swarm_size)]
+        self.swarm = [Boid(self.size.w, self.size.h) for _ in range(self.swarm_size)]
         self.location_logger = []
         
-    def update(self):		
+    def update(self, dt):
+        self.dt = dt
+        self.t += dt
         if not any(self.location_logger):
             self.location_logger = []
             
@@ -45,7 +60,7 @@ class SwarmScene (Scene):
             
         for boid in self.swarm:
             boid.position += boid.v
-            boid.rotation = math.atan2(*reversed(boid.v)) + math.pi	
+            boid.update_graphics()
 
 
                 
@@ -54,55 +69,58 @@ class SwarmScene (Scene):
         vec_b = boid.v
         vec_a /= abs(vec_a)
         vec_b /= abs(vec_b)
-        cos_theta = vec_a[0] * vec_b[0] + vec_a[1] * vec_b[1] / abs(vec_a) * abs(vec_b)
+        cos_theta = (vec_a.x * vec_b.x + vec_a.y * vec_b.y) / (abs(vec_a) * abs(vec_b))
         if 1 < cos_theta:
             cos_theta = 1
         elif cos_theta < -1:
             cos_theta = -1
         return cos_theta
         
-    def draw(self):
-        stroke(0,0,0)
-        stroke_weight(0.3)
+    def draw(self, surface):
+        surface.fill(self.background_color)
         for boid in self.swarm:
-            neighbor_set = set([*boid.cohesion_neighbors,*boid.alignment_neighbors,*boid.separation_neighbors])
+            neighbor_set = set([*boid.cohesion_neighbors, *boid.alignment_neighbors, *boid.separation_neighbors])
             for i in neighbor_set:
                 if boid.drawing_coordinates and i.drawing_coordinates:
-                    line(boid.position[0], boid.position[1], i.position[0], i.position[1])
-                
-        stroke_weight(1)
+                    pygame.draw.line(surface, (0, 0, 0), boid.position, i.position, 1)
+
         if self.location_logger:
             for i in range(len(self.location_logger) - 1):
-                if self.location_logger[i] == None or self.location_logger[i+1] == None:
+                if self.location_logger[i] is None or self.location_logger[i+1] is None:
                     continue
-                else:
-                    line(self.location_logger[i].x,self.location_logger[i].y,self.location_logger[i+1].x,self.location_logger[i+1].y)
+                pygame.draw.line(surface, (0, 0, 0), self.location_logger[i], self.location_logger[i+1], 1)
 
-    def touch_began(self,touch):
-        self.location_logger.append(touch.location)
-        self.touch_detect(touch.location)
+        for boid in self.swarm:
+            surface.blit(boid.image, boid.rect)
+
+    def touch_began(self, pos):
+        p = Vector2(pos)
+        self.location_logger.append(p)
+        self.touch_detect(p)
     
-    def touch_moved(self,touch):
-        self.location_logger.append(touch.location)
-        self.touch_detect(touch.location)
+    def touch_moved(self, pos):
+        p = Vector2(pos)
+        self.location_logger.append(p)
+        self.touch_detect(p)
     
-    def touch_ended(self,touch):
+    def touch_ended(self, pos=None):
         self.location_logger.append(None)
         
-    def touch_detect(self,touch_location):
+    def touch_detect(self, touch_location):
         for i in self.swarm:
             if abs(touch_location - i.position) < 100:
-                i.v += (i.position - touch_location) /abs(i.position - touch_location) * 5
+                i.v += (i.position - touch_location) / abs(i.position - touch_location) * 5
 
-    def did_change_size(self):
+    def did_change_size(self, width, height):
+        self.size.w = width
+        self.size.h = height
         for b in self.swarm:
-            b.max_x = self.size.w
-            b.max_y = self.size.h
+            b.max_x = width
+            b.max_y = height
                 
     def born(self):
-        self.swarm.append(Boid(self.size.w, self.size.y, parent=self))
+        self.swarm.append(Boid(self.size.w, self.size.h))
 
-    def kill(self,boid):
+    def kill(self, boid):
         self.swarm.remove(boid)
-        boid.remove_from_parent()
         
