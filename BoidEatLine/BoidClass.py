@@ -1,18 +1,26 @@
 from random import uniform, choice, random, randint
 import math
 import numpy as np
-from scene import *
+import pygame
+from pygame.math import Vector2
 
-class Boid (SpriteNode):
-    def __init__(self, max_x, max_y, *args, **kwargs):
-        img = 'IMG_1962.PNG'
-        SpriteNode.__init__(self, img, *args, **kwargs)
+# pygame does not provide a Point class, so Vector2 is used instead
+Point = Vector2
+
+class Boid(pygame.sprite.Sprite):
+    def __init__(self, max_x, max_y):
+        super().__init__()
+        # create a simple triangular surface to represent the boid
+        self.image_orig = pygame.Surface((20, 20), pygame.SRCALPHA)
+        pygame.draw.polygon(self.image_orig, (0, 0, 0), [(10, 0), (0, 20), (20, 20)])
+        self.image = self.image_orig
+        self.rect = self.image.get_rect(center=(uniform(0, max_x), uniform(0, max_y)))
         
         self.drawing_coordinates = []
         
         self.age = 1
         self.death_age = randint(20, 90)
-        self.scale = 0.0025
+        self.scale = 1
 
         self.first_max_speed = np.random.normal(4, 0.008, 1)[0]
         self.max_speed = self.first_max_speed
@@ -35,8 +43,10 @@ class Boid (SpriteNode):
         self.max_y = max_y
         
         a = uniform(0, math.pi*2)
-        self.position = (uniform(0, max_x), uniform(0, max_y))
+        self.position = Vector2(uniform(0, max_x), uniform(0, max_y))
         self.v = Vector2(math.cos(a), math.sin(a))
+        self.rect.center = self.position
+        self.rotation = 0
         
         self.cohesion_neighbors = []
         self.separation_neighbors = []
@@ -96,3 +106,10 @@ class Boid (SpriteNode):
             
     def age_effect(self):
         self.max_speed =  self.first_max_speed - 1.2 * self.age/self.death_age
+
+    def update_graphics(self):
+        """Update sprite image orientation and rect position."""
+        self.rotation = math.atan2(self.v.y, self.v.x) + math.pi / 2
+        angle = -math.degrees(self.rotation)
+        self.image = pygame.transform.rotate(self.image_orig, angle)
+        self.rect = self.image.get_rect(center=self.position)
