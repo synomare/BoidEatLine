@@ -1,0 +1,23 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: deadsnakes/action@v3
+        with:
+          python-version: '3.11'
+      - name: Install system deps
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Install deps
+        run: poetry install --no-interaction
+      - name: Run tests
+        run: xvfb-run -s "-screen 0 1024x768x24" poetry run pytest -q

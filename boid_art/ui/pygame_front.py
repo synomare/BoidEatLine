@@ -1,13 +1,17 @@
 import argparse
 import asyncio
+import os
 import pygame
 
 from ..engine import EventBus, TimeManager, MetaCore
 from ..scenes.swarm_scene import SwarmScene
 from .hud import HUD
+from ..cli import get_parser
 
 
-async def main(swarm: int = 35, mem: int = 256):
+async def main(swarm: int = 35, mem_capacity: int = 256, headless: bool = False):
+    if headless:
+        os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("BoidEatLine")
@@ -16,7 +20,7 @@ async def main(swarm: int = 35, mem: int = 256):
     bus = EventBus()
     tm = TimeManager(60)
     scene = SwarmScene(
-        screen.get_width(), screen.get_height(), bus, swarm_size=swarm, mem_capacity=mem
+        screen.get_width(), screen.get_height(), bus, swarm_size=swarm, mem_capacity=mem_capacity
     )
     observer = MetaCore(bus)
     font = pygame.font.SysFont(None, 24)
@@ -59,8 +63,6 @@ async def main(swarm: int = 35, mem: int = 256):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--swarm", type=int, default=35)
-    parser.add_argument("--mem", type=int, default=256)
+    parser = get_parser()
     args = parser.parse_args()
-    asyncio.run(main(swarm=args.swarm, mem=args.mem))
+    asyncio.run(main(swarm=args.swarm, mem_capacity=args.mem_capacity, headless=args.headless))

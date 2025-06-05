@@ -23,17 +23,17 @@ class SubjectiveStream:
     def compress(self):
         if not self.data:
             return
-        pts = np.array([[p.x, p.y] for p in self.data])
         max_points = int(self.capacity * self.compress_ratio)
-        if len(pts) <= max_points:
+        if len(self.data) <= max_points:
             return
+        pts = np.array([[p.x, p.y] for p in self.data])
         # Douglas-Peucker simplification
         simplified_idx = douglas_peucker(pts, max_points)
         self.data = deque([Vector2(*pts[i]) for i in simplified_idx], maxlen=self.capacity)
 
 
 def douglas_peucker(points: np.ndarray, max_points: int) -> List[int]:
-    if len(points) <= 2 or len(points) <= max_points:
+    if len(points) <= 2 or len(points) <= max_points or max_points < 2:
         return list(range(len(points)))
 
     # Iterative DP using stack

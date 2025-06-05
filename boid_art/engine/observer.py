@@ -41,5 +41,8 @@ class MetaCore:
 
     def draw_graph(self, surface):
         import pygame
+        if self.graph.number_of_nodes() < 2:
+            return
+        pos = nx.spring_layout(self.graph, seed=42)
         for u, v in self.graph.edges():
-            pygame.draw.line(surface, (255, 0, 0), u, v, 1)
+            pygame.draw.line(surface, (255, 0, 0), pos[u], pos[v], 1)
