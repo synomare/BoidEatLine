@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boid-art"
+version = "0.1.0"
+description = "Asynchronous boid simulation with pygame UI"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pygame",
+    "networkx"
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+boid-art = "boid_art.__main__:run"
+
